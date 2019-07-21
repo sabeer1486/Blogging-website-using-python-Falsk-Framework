@@ -1,9 +1,9 @@
 # Blogging-website-using-python-Falsk-Framework
 
-intall all the modules form the requitments.txt
+Intall all the modules form the requitments.txt using the command 'pip install -r requirments.txt'.
 
-maintain the same file format so code don't give any erros
+Maintain the same file format so code don't give any erros
 
-run the 'run.py'
+Run the 'run.py', flask modules gives localhost address on output screen, follow the link in browser.
 
-now all is set you can see your website on browser
+Now all is set you can see your website on browser.
