@@ -1,0 +1,96 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+        <div class="media">
+            <img class="rounded-circle account-img" src="{{ image_file }}" alt="image_file">
+            <div class="media-body">
+                <h2 class="account-heading">{{ current_user.username }}</h2>
+                <p class="text-secondary">{{ current_user.email }}</p>
+            </div>
+        </div>
+        <form action="#" method="POST" novalidate enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Profile Info</legend>
+                <div class="form-group">
+                    {{ form.username.label(class="form-control-label") }}
+                    {% if form.username.errors %}
+                        {{ form.username(class="form-control form-control-lg  is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.username.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else%}
+                        {{ form.username(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.email.label(class="form-control-label") }}
+                    {% if form.email.errors %}
+                        {{ form.email(class="form-control form-control-lg  is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.email.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else%}
+                        {{ form.email(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.picture.label(class="form-control-label") }} <br>
+                    {{ form.picture(class="form-control-label") }}
+                    {% if form.picture.errors %}
+                        {% for error in form.picture.errors %}
+                        <span>{{ error }}</span><br>
+                        {% endfor %}  
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form> 
+      </div>
+      <legend class="border-bottom mb-4">Posts By You</legend>
+        {% for post in posts.items %}
+            <article class="media content-section">
+              <div class="media-body">
+                <div class="article-metadata">
+                  <img class="rounded-circle article-img mb-1" src="{{url_for('static', filename='profile_pictures/' + post.author.image_file)}}" alt="image">
+                  <span class="mr-2">{{ post.author.username }}</span>
+                  <small class="text-muted">{{ post.date_posted.strftime('%d-%m-%y') }}</small>
+                </div>
+                <h2><a class="article-title" href="{{ url_for('posts.post', post_id=post.id) }}">{{ post.title }}</a></h2>            
+                <p class="article-content">{{ post.content }}</p>
+                {% if post.image_file %}
+                    <img class="rounded img-fluid" src="{{url_for('static', filename='post_pictures/' + post.image_file)}}" alt="">
+                {% endif %}
+                <p class="text-right">
+                    {% if current_user.is_authenticated %}
+                      {% if current_user.has_liked_post(post) %}
+                        <a href="{{ url_for('posts.like_action', post_id=post.id, action='unlike') }}">Unlike</a>
+                      {% else %}
+                        <a href="{{ url_for('posts.like_action', post_id=post.id, action='like') }}">Like</a>
+                      {% endif %}
+                      {{ post.likes.count() }} likes
+                    {% else %}
+                      {{ post.likes.count() }} likes
+                    {% endif %}
+                  </p>
+              </div>
+            </article>
+        {% endfor %}
+        {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+        {% if page_num %}
+          {% if posts.page == page_num %}
+            <a class="btn btn-info mb-4" href="{{ url_for('users.account', page=page_num) }}">{{ page_num }}</a>
+          {% else %}
+            <a class="btn btn-outline mb-4" href="{{ url_for('users.account', page=page_num) }}">{{ page_num }}</a>
+          {% endif %}
+        {% else %}
+          ...
+        {% endif %}
+    {% endfor %}
+{% endblock content %}
